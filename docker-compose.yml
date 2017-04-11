@@ -18,10 +18,12 @@ services:
     - consul
     ports:
     - "80:80"
+    environment:
+    - SERVICE_80_CHECK_HTTP=.
 
   consul:
     command: -server -bootstrap #-advertise 0.0.0.0
-    image: progrium/consul:latest
+    image: gliderlabs/consul-server:latest
     ports:
     - "8300:8300"
     - "8400:8400"
@@ -31,9 +33,10 @@ services:
     - "/var/run/docker.sock:/tmp/docker.sock"
 
   registrator:
-    command: consul://consul:8500
+    command: -internal=true consul://consul:8500
     image: gliderlabs/registrator:latest
     links:
     - consul
     volumes:
     - "/var/run/docker.sock:/tmp/docker.sock"
+
